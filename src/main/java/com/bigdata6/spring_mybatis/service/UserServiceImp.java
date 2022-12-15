@@ -3,10 +3,12 @@ package com.bigdata6.spring_mybatis.service;
 import com.bigdata6.spring_mybatis.dto.PagingDto;
 import com.bigdata6.spring_mybatis.dto.UserDto;
 import com.bigdata6.spring_mybatis.mapper.UserMapper;
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.ListResourceBundle;
 
 // SPRING BEAN 컨테이너(팩터리)에서 관히 받는다. @Component(최상위 컨테이너) > 그중에 @Mapper, @Service(명시적)
 @Service
@@ -51,7 +53,10 @@ public class UserServiceImp implements UserService{
 
     @Override
     public List<UserDto> list(PagingDto paging) {
-        return null;
+       int totalRows = userMapper.count(paging);
+       paging.setTotalRows(totalRows);
+       List<UserDto> list = userMapper.findPaging(paging);
+        return list;
     }
 
     @Override

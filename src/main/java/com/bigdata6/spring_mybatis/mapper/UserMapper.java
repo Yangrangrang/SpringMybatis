@@ -14,5 +14,4 @@ import java.util.Map;
 public interface UserMapper extends CRUD<UserDto,String> {
     List<UserDto> findAll();
     UserDto findByUserIdAndPw(String userId, String pw);
-//    List<UserDto> findPaging(PagingDto page);
 }
