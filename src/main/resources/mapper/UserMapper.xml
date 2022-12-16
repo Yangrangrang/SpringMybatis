@@ -27,4 +27,9 @@
             parameterType="com.bigdata6.spring_mybatis.dto.PagingDto">
         SELECT COUNT(*) FROM USER
     </select>
+<!--    CRUD. T findById(P id) => UserDto fingById(String id) -->
+<!--    parameterType은 거의 생략한다.-->
+    <select id="findById" resultType="UserDto" parameterType="String">
+        SELECT * FROM USER WHERE user_id=#{id}
+    </select>
 </mapper>

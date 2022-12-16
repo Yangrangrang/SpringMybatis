@@ -61,7 +61,8 @@ public class UserServiceImp implements UserService{
 
     @Override
     public UserDto detail(String id) {
-        return null;
+        UserDto detail = userMapper.findById(id);
+        return detail;
     }
 
     @Override
