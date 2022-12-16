@@ -1,39 +1,41 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en"
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{/layout}">
 <head>
     <meta charset="UTF-8">
     <title>유저리스트</title>
 </head>
-<body>
-  <th:block th:insert="/headerNav"></th:block>
+<div layout:fragment="contents">
+<!--  <th:block th:insert="/headerNav"></th:block>-->
   <h1>유저리스트</h1>
 <!--    권장하지 않는다.-->
 <!--    <div th:text="${userDtoList}"></div>-->
-    <table>
-        <thead>
-            <tr>
-                <th>아이디</th>
-                <th>이름</th>
-                <th>생일</th>
-                <th>폰번호</th>
-                <th>가입일</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr th:each="user : ${userList}">
-                <td th:text="${user.user_id}"></td>
-                <td th:text="${user.name}"></td>
-                <td th:text="${user.birth}"></td>
-                <td th:text="${user.phone}"></td>
-                <td th:text="${user.signup}"></td>
-            </tr>
-        </tbody>
-    </table>
-    <p th:text="${paging}"></p>
-    <nav>
-        <ul th:each="i : ${#numbers.sequence(paging.startPage,paging.endPage)}">
-            <li><a th:href="@{''(page=${i},rows=${param.rows})}" th:text="${i}"></a></li>
-        </ul>
-    </nav>
-</body>
+    <div class="uk-overflow-auto">
+        <table class="uk-table uk-table-divider uk-table-hover">
+            <thead>
+                <tr>
+                    <th>아이디</th>
+                    <th>이름</th>
+                    <th>생일</th>
+                    <th>폰번호</th>
+                    <th>가입일</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="user : ${userList}" style="cursor: pointer"
+                    th:onclick="location.href = [[@{'detail.do' (user_id=${user.user_id})}]]">
+                    <td th:text="${user.user_id}"></td>
+                    <td th:text="${user.name}"></td>
+                    <td th:text="${user.birth}"></td>
+                    <td th:text="${user.phone}"></td>
+                    <td th:text="${user.signup}"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+<!--    <p th:text="${paging}"></p>-->
+    <th:block th:insert="/pagination"></th:block>
+</div>
 </html>

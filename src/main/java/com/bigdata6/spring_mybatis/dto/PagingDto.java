@@ -35,14 +35,21 @@ public class PagingDto {
     public void setQueryString(Map<String, String[]> queryMap) {
         //{name :[val1,val2..],boardNo=[1],hobby=["낚시","그림"]}
         //?hobby=낚시&hobby=그림
-        StringBuilder queryString= new StringBuilder();
+        String queryString= "";
+        String and = "?";
         for (String name :queryMap.keySet()){
             if(!name.equals("page")){
                 for (String val : queryMap.get(name)){
-                    queryString.append(name).append("=").append(val).append("&");
+                    queryString+=and+name+"="+val;
+                    and="&";
                 }
             }
-        }
+        }   // 최종나오는 > rows=1&order=user_id&
+        // th:href=@{'url'(name=1,name2=3) } => url?name=1&name2
+        // th:href=@{''} => 아무것도 쓰지 않으면 상대경로가 들어감
+        // th:href=@{''(page=${i})} => list.do?page=3
+        // th:href=@{'?'+'rows=1&order=user_id&'(page=${i})} => list.do?rows=1&order=user_id&&page=3
+
         this.queryString = queryString.toString();
     }
 
