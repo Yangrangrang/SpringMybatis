@@ -19,4 +19,5 @@ public interface UserService {
     List<UserDto> list(PagingDto paging);   //나중에 페이징으로 바꿀 예정
     UserDto detail(String id);
     int idCheck(String id);     //0:존재하지 않는 아이디,1:존재하는 아이디,-1:오류
+    int remove(String id);
 }

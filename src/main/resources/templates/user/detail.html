@@ -60,7 +60,7 @@
         <div class="uk-inline">
             <span class="uk-form-icon uk-form-icon-flip" uk-icon="icon: clock"></span>
             <input class="uk-input uk-form-blank" type="text" readonly id="userSignup"
-                   th:value="${#calendars.format(user.signup,'yyyy-MM-dd')}" name="signup">
+                   th:value="${#calendars.format(user.signup,'yyyy-MM-dd HH:mm:ss')}" name="signup">
         </div>
     </div>
 </div>

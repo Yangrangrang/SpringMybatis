@@ -67,7 +67,11 @@ public class UserController {
     public String modify(UserDto user){
         int modify = 0;
         System.out.println(user);
-        modify= userService.adminModify(user);
+        try {
+            modify= userService.adminModify(user);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         if(modify>0){
             return "redirect:/user/detail.do?user_id="+user.getUser_id();
         } else {
@@ -77,12 +81,32 @@ public class UserController {
     @GetMapping("/delete.do")
     public String delete(@RequestParam(name="user_id")String userId){
         int delete = 0;
-        delete= userService.remove(userId);
+        try {
+            delete= userService.remove(userId);
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
         if(delete>0){
             return "redirect:/user/list.do";
         } else {
             return "redirect:/user/modify.do?user_id" + userId;
         }
     }
-
+    @GetMapping("/register.do")
+    public void register(){}
+    @PostMapping("register.do")
+    public String register(UserDto user){
+        System.out.println(user);
+        int register = 0;
+        try{
+            register=userService.register(user);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        if (register>0){
+            return "redirect:/user/detail.do?user_id="+user.getUser_id();
+        } else {
+            return "redirect:/user/register.do";
+        }
+    }
 }

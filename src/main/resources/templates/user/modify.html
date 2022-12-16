@@ -9,12 +9,8 @@
 </head>
 <body>
     <div layout:fragment="contents">
-        <h1><span th:text="${param.user_id}"></span> 유저 상세 양식 페이지</h1>
+        <h1><span th:text="${param.user_id}"></span> 유저 수정 양식 페이지</h1>
         <form action="modify.do" method="post">
-            <p class="uk-text-right">
-                <a class="uk-button uk-button-small uk-button-primary"
-                   th:href="@{'modify.do'(user_id=${user.user_id})}">수정 폼</a>
-            </p>
         <!--    <div th:text="${user}"></div>-->
             <div class="uk-margin">
                 <label class="uk-form-label" for="userUserId">아이디 :</label>
@@ -74,7 +70,7 @@
             <div class="uk-margin-top">
                 <button class="uk-button uk-button-default" type="reset">초기화</button>
                 <button class="uk-button uk-button-primary" type="submit">수정</button>
-                <button class="uk-button uk-button-danger" type="submit">삭제</button>
+                <a class="uk-button uk-button-danger" th:href="@{'delete.do'(user_id=${user.user_id})}">삭제</a>
             </div>
         </form>
     </div>

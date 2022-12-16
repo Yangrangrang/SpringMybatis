@@ -33,7 +33,7 @@ public class UserServiceImp implements UserService{
 
     @Override
     public int register(UserDto user) {
-        return 0;
+        return userMapper.insert(user);
     }
 
     @Override
@@ -70,5 +70,10 @@ public class UserServiceImp implements UserService{
     @Override
     public int idCheck(String id) {
         return 0;
+    }
+
+    @Override
+    public int remove(String id) {
+        return userMapper.deleteById(id);
     }
 }
