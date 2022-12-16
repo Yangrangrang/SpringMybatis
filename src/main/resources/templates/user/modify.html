@@ -5,64 +5,78 @@
         layout:decorate="~{/layout}">
 <head>
     <meta charset="UTF-8">
-    <title>유저 상세</title>
+    <title>유저 수정 양식</title>
 </head>
 <body>
-<div layout:fragment="contents">
-  <h1><span th:text="${param.user_id}"></span> 유저 상세 페이지</h1>
-    <p class="uk-text-right">
-        <a class="uk-button uk-button-small uk-button-primary"
-           th:href="@{'modify.do'(user_id=${user.user_id})}">수정 폼</a>
-    </p>
-<!--    <div th:text="${user}"></div>-->
-    <div class="uk-margin">
-        <label class="uk-form-label" for="userUserId">아이디 :</label>
-        <div class="uk-inline">
-            <span class="uk-form-icon uk-form-icon-flip" uk-icon="icon: user"></span>
-            <input class="uk-input uk-form-blank" type="text" readonly id="userUserId"
-                   th:value="${user.user_id}" name="user_id">
-        </div>
+    <div layout:fragment="contents">
+        <h1><span th:text="${param.user_id}"></span> 유저 상세 양식 페이지</h1>
+        <form action="modify.do" method="post">
+            <p class="uk-text-right">
+                <a class="uk-button uk-button-small uk-button-primary"
+                   th:href="@{'modify.do'(user_id=${user.user_id})}">수정 폼</a>
+            </p>
+        <!--    <div th:text="${user}"></div>-->
+            <div class="uk-margin">
+                <label class="uk-form-label" for="userUserId">아이디 :</label>
+                <div class="uk-inline">
+                    <span class="uk-form-icon uk-form-icon-flip" uk-icon="icon: user"></span>
+                    <input class="uk-input uk-form-blank" type="text" readonly id="userUserId"
+                           th:value="${user.user_id}" name="user_id">
+                </div>
+            </div>
+            <div class="uk-margin">
+                <label class="uk-form-label" for="userName">이름 :</label>
+                <div class="uk-inline">
+                    <span class="uk-form-icon uk-form-icon-flip" uk-icon="icon: happy"></span>
+                    <input class="uk-input uk-form-blank" type="text" id="userName"
+                           th:value="${user.name}" name="name">
+                </div>
+            </div>
+            <div class="uk-margin">
+                <label class="uk-form-label" for="userPw">비밀번호 :</label>
+                <div class="uk-inline">
+                    <span class="uk-form-icon uk-form-icon-flip" uk-icon="icon: lock"></span>
+                    <input class="uk-input uk-form-blank" type="text" id="userPw"
+                           th:value="${user.pw}" name="pw">
+                </div>
+            </div>
+            <div class="uk-margin">
+                <label class="uk-form-label" for="userPhone">폰번호 :</label>
+                <div class="uk-inline">
+                    <span class="uk-form-icon uk-form-icon-flip" uk-icon="icon: receiver"></span>
+                    <input class="uk-input uk-form-blank" type="text" id="userPhone"
+                           th:value="${user.phone}" name="phone">
+                </div>
+            </div>
+            <div class="uk-margin">
+                <label class="uk-form-label" for="userEmail">이메일 :</label>
+                <div class="uk-inline">
+                    <span class="uk-form-icon uk-form-icon-flip" uk-icon="icon: mail"></span>
+                    <input class="uk-input uk-form-blank" type="text" id="userEmail"
+                           th:value="${user.email}" name="email">
+                </div>
+            </div>
+            <div class="uk-margin">
+                <label class="uk-form-label" for="userBrith">생일(나이) :</label>
+                <div class="uk-inline">
+                    <input class="uk-input uk-form-blank" type="date" id="userBrith"
+                           th:value="${#calendars.format(user.birth,'yyyy-MM-dd')}" name="birth">
+                </div>
+            </div>
+            <div class="uk-margin">
+                <label class="uk-form-label" for="userSignup">가입일 :</label>
+                <div class="uk-inline">
+                    <input class="uk-input uk-form-blank" type="datetime-local" id="userSignup"
+                           th:value="${#calendars.format(user.signup,'yyyy-MM-dd HH:mm')}"
+                           name="signup">
+                </div>
+            </div>
+            <div class="uk-margin-top">
+                <button class="uk-button uk-button-default" type="reset">초기화</button>
+                <button class="uk-button uk-button-primary" type="submit">수정</button>
+                <button class="uk-button uk-button-danger" type="submit">삭제</button>
+            </div>
+        </form>
     </div>
-    <div class="uk-margin">
-        <label class="uk-form-label" for="userName">이름 :</label>
-        <div class="uk-inline">
-            <span class="uk-form-icon uk-form-icon-flip" uk-icon="icon: happy"></span>
-            <input class="uk-input uk-form-blank" type="text" readonly id="userName"
-                   th:value="${user.name}" name="name">
-        </div>
-    </div>
-    <div class="uk-margin">
-        <label class="uk-form-label" for="userPhone">폰번호 :</label>
-        <div class="uk-inline">
-            <span class="uk-form-icon uk-form-icon-flip" uk-icon="icon: receiver"></span>
-            <input class="uk-input uk-form-blank" type="text" readonly id="userPhone"
-                   th:value="${user.phone}" name="phone">
-        </div>
-    </div>
-    <div class="uk-margin">
-        <label class="uk-form-label" for="userEmail">이메일 :</label>
-        <div class="uk-inline">
-            <span class="uk-form-icon uk-form-icon-flip" uk-icon="icon: mail"></span>
-            <input class="uk-input uk-form-blank" type="text" readonly id="userEmail"
-                   th:value="${user.email}" name="email">
-        </div>
-    </div>
-    <div class="uk-margin">
-        <label class="uk-form-label" for="userBrith">생일(나이) :</label>
-        <div class="uk-inline">
-            <span class="uk-form-icon uk-form-icon-flip" uk-icon="icon: calendar"></span>
-            <input class="uk-input uk-form-blank" type="text" readonly id="userBrith"
-                   th:value="${#calendars.format(user.birth,'yyyy-MM-dd')}" name="birth">
-        </div>
-    </div>
-    <div class="uk-margin">
-        <label class="uk-form-label" for="userSignup">가입일 :</label>
-        <div class="uk-inline">
-            <span class="uk-form-icon uk-form-icon-flip" uk-icon="icon: clock"></span>
-            <input class="uk-input uk-form-blank" type="text" readonly id="userSignup"
-                   th:value="${#calendars.format(user.signup,'yyyy-MM-dd')}" name="signup">
-        </div>
-    </div>
-</div>
 </body>
 </html>

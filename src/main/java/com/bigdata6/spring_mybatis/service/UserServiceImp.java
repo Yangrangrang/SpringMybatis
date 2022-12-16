@@ -43,7 +43,9 @@ public class UserServiceImp implements UserService{
 
     @Override
     public int adminModify(UserDto user) {
-        return 0;
+        int modify =0;
+        modify=userMapper.updateById(user);
+        return modify;
     }
 
     @Override

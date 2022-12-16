@@ -28,8 +28,34 @@
         SELECT COUNT(*) FROM USER
     </select>
 <!--    CRUD. T findById(P id) => UserDto fingById(String id) -->
-<!--    parameterType은 거의 생략한다.-->
+<!--    parameterType은 거의 생략한다. 두개가 오면 더더욱 쓸필요없다.-->
     <select id="findById" resultType="UserDto" parameterType="String">
         SELECT * FROM USER WHERE user_id=#{id}
+    </select>
+<!--    int updateById(UserDto dto)-->
+    <update id="updateById" parameterType="UserDto">
+        UPDATE USER SET
+            name=#{name},
+            pw=#{pw},
+            phone=#{phone},
+            email=#{email},
+            birth=#{birth},
+            signup=#{signup}
+            WHERE user_id=#{user_id}
+    </update>
+<!--    int insert(UserDto dto);-->
+    <insert id="insert" parameterType="UserDto">
+        INSERT INTO USER (user_id,name,pw,phone,email,birth) VALUES
+        (#{user_id},#{name},#{pw},#{phone},#{email},#{birth})
+    </insert>
+<!--    int deleteById(String id);-->
+<!--    변수명이랑 똑같아야한다 id > id-->
+    <delete id="deleteById" parameterType="String">
+        DELETE FROM USER WHERE user_id=#{id}
+    </delete>
+<!--    UserDto findByUserIdAndPw(String userId, String pw);-->
+<!--    두개의 parameterType이 온다면 참조로 작성 ( .)-->
+    <select id="findByUserIdAndPw" resultType="UserDto">
+        SELECT * FROM USER WHERE user_id=#{userId} AND pw=#{pw}
     </select>
 </mapper>

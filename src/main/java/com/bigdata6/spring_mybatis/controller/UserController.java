@@ -7,10 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.io.IOException;
@@ -58,4 +55,34 @@ public class UserController {
         model.setViewName("/user/detail");
         return model;
     }
+    @GetMapping("/modify.do")
+    public void modify(
+            @RequestParam(name="user_id")String userId,
+            Model model
+    ) {
+        UserDto user = userService.detail(userId);
+        model.addAttribute("user",user);
+    }
+    @PostMapping("/modify.do")
+    public String modify(UserDto user){
+        int modify = 0;
+        System.out.println(user);
+        modify= userService.adminModify(user);
+        if(modify>0){
+            return "redirect:/user/detail.do?user_id="+user.getUser_id();
+        } else {
+            return "redirect:/user/modify.do?user_id="+user.getUser_id();
+        }
+    }
+    @GetMapping("/delete.do")
+    public String delete(@RequestParam(name="user_id")String userId){
+        int delete = 0;
+        delete= userService.remove(userId);
+        if(delete>0){
+            return "redirect:/user/list.do";
+        } else {
+            return "redirect:/user/modify.do?user_id" + userId;
+        }
+    }
+
 }
