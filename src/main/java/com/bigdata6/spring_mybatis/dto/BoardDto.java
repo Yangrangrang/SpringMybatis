@@ -10,7 +10,7 @@ public class BoardDto {
     private String title;   //title
     private String contents;    //contents
     private Date postTime;    //post_time
-    private String userId;   //user_id  // fetch.lazy
+    private String userId;   //user_id  // fetch.lazy에서 User를 호출하지 않기 위해
     private UserDto user;   // Board : User = N : 1  (fk user_id)
     private int views;   //views
 }

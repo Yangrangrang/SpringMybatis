@@ -4,6 +4,8 @@ import com.bigdata6.spring_mybatis.dto.BoardDto;
 import com.bigdata6.spring_mybatis.dto.PagingDto;
 import com.bigdata6.spring_mybatis.service.BoardService;
 import jakarta.servlet.http.HttpServletRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +18,7 @@ import java.util.List;
 public class BoardController {
 
     private BoardService boardService;
+    private Logger log= LoggerFactory.getLogger(this.getClass().getSimpleName());
 
     public BoardController(BoardService boardService) {
         this.boardService = boardService;
@@ -32,6 +35,8 @@ public class BoardController {
         List<BoardDto> boardList = boardService.list(paging);
         model.addAttribute("boardList",boardList);
         model.addAttribute("paging",paging);
+        log.info(paging.toString());
+
         return "/board/list";
     }
 }
