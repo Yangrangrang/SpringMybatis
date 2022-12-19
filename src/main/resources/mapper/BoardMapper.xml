@@ -7,6 +7,7 @@
     <resultMap id="boardMap" type="BoardDto" autoMapping="true">
         <id column="board_no" property="boardNo"/>
         <result column="post_time" property="postTime"/>
+        <result column="user_id" property="userId"/>
 <!--        <result column="title" property="title"></result>-->
 <!--        <result column="contents" property="contents"></result>-->
 <!--        <result column="views" property="views"></result>-->
@@ -14,7 +15,7 @@
         <association property="user"
                      column="user_id"
                      select="com.bigdata6.spring_mybatis.mapper.UserMapper.findById"
-                     fetchType="eager"
+                     fetchType="lazy"
                      autoMapping="true"/>
     </resultMap>
     <!--    association select(같이 출력할 쿼리 Id) column(select에서 사용할 매개변수)
@@ -24,6 +25,18 @@
     <select id="findAll" resultMap="boardMap">
 <!--        SELECT * FROM BOARD INNER JOIN USER USING (user_id)-->
         SELECT * FROM BOARD
+    </select>
+
+    <select id="findPaging" parameterType="pagingDto" resultMap="boardMap">
+        SELECT * FROM BOARD ORDER BY ${orderField} ${direct} LIMIT #{startRow}, #{rows}
+    </select>
+
+    <select id="count" resultType="int" parameterType="PagingDto">
+        SELECT COUNT(*) FROM BOARD
+    </select>
+
+    <select id="findById" resultMap="boardMap" parameterType="Integer">
+        SELECT * FROM BOARD WHERE board_no=#{id}
     </select>
 <!--    List<BoardDto> findAll();-->
  <!--

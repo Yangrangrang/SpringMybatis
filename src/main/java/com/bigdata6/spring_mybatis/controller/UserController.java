@@ -6,6 +6,8 @@ import com.bigdata6.spring_mybatis.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +20,7 @@ import java.util.List;
 @RequestMapping("/user")
 public class UserController {
     private UserService userService;
-
+    private Logger log = LoggerFactory.getLogger(this.getClass().getSimpleName());
     public UserController(UserService userService){
         this.userService = userService;
     }
@@ -36,7 +38,8 @@ public class UserController {
 //        PagingDto pagingDto = new PagingDto(page,rows,orderField,direct);
 //        if(paging.getOrderField()==null)paging.setOrderField("user_id");      //다이나믹 쿼리로 처리
         paging.setQueryString(req.getParameterMap());
-        System.out.println(paging);
+//        System.out.println(paging);
+        log.info(paging.toString());
         List<UserDto> userDtoList = userService.list(paging);
         model.addAttribute("userList",userDtoList);
         model.addAttribute("paging",paging);
