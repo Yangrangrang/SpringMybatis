@@ -5,6 +5,7 @@ import com.bigdata6.spring_mybatis.dto.UserDto;
 import com.bigdata6.spring_mybatis.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -58,13 +59,15 @@ public class UserController {
     @GetMapping("/modify.do")
     public void modify(
             @RequestParam(name="user_id")String userId,
-            Model model
+            Model model,
+            @SessionAttribute UserDto loginUser
     ) {
         UserDto user = userService.detail(userId);
         model.addAttribute("user",user);
     }
     @PostMapping("/modify.do")
-    public String modify(UserDto user){
+    public String modify(UserDto user,
+                         @SessionAttribute UserDto loginUser){
         int modify = 0;
         System.out.println(user);
         try {
@@ -79,7 +82,8 @@ public class UserController {
         }
     }
     @GetMapping("/delete.do")
-    public String delete(@RequestParam(name="user_id")String userId){
+    public String delete(@RequestParam(name="user_id")String userId,
+                         @SessionAttribute UserDto loginUser){
         int delete = 0;
         try {
             delete= userService.remove(userId);
@@ -93,9 +97,12 @@ public class UserController {
         }
     }
     @GetMapping("/register.do")
-    public void register(){}
-    @PostMapping("register.do")
-    public String register(UserDto user){
+    public void register(@SessionAttribute UserDto loginUser) {
+
+    }
+    @PostMapping("/register.do")
+    public String register(UserDto user,
+                           @SessionAttribute UserDto loginUser){
         System.out.println(user);
         int register = 0;
         try{
@@ -108,5 +115,30 @@ public class UserController {
         } else {
             return "redirect:/user/register.do";
         }
+    }
+    @GetMapping("/login.do")
+    public void login(){
+
+    }
+    @PostMapping ("/login.do")
+    public String login(@RequestParam(name="user_id") String userId,
+                        String pw,
+                        HttpSession session){
+        System.out.println(userId);
+        System.out.println(pw);
+        UserDto user = userService.login(userId,pw);
+        session.setAttribute("loginUser",user);
+        if(user==null){
+            return "redirect:/user/login.do";
+        } else {
+            return "redirect:/";
+        }
+    }
+    @GetMapping("/logout.do")
+    public String logout(HttpSession session){
+//        session.invalidate();   //전체 만료
+        session.removeAttribute("loginUser");
+        return "redirect:/";
+
     }
 }
