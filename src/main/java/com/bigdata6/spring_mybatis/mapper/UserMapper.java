@@ -15,4 +15,15 @@ public interface UserMapper extends CRUD<UserDto,String> {
     List<UserDto> findAll();
     UserDto findByUserIdAndPw(String userId, String pw);
 
+    List<UserDto> findPaging(PagingDto paging);
+
+    int count(PagingDto paging);
+
+    UserDto findById(String id);
+
+    int deleteById(String id);
+
+    int updateById(UserDto dto);
+
+    int insert(UserDto dto);
 }
