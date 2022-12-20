@@ -2,13 +2,16 @@ package com.bigdata6.spring_mybatis.controller;
 
 import com.bigdata6.spring_mybatis.dto.BoardDto;
 import com.bigdata6.spring_mybatis.dto.PagingDto;
+import com.bigdata6.spring_mybatis.dto.ReplyDto;
 import com.bigdata6.spring_mybatis.service.BoardService;
+import com.bigdata6.spring_mybatis.service.ReplyService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
@@ -18,10 +21,12 @@ import java.util.List;
 public class BoardController {
 
     private BoardService boardService;
+    private ReplyService replyService;
     private Logger log= LoggerFactory.getLogger(this.getClass().getSimpleName());
 
-    public BoardController(BoardService boardService) {
+    public BoardController(BoardService boardService, ReplyService replyService) {
         this.boardService = boardService;
+        this.replyService = replyService;
     }
 
     @GetMapping("/list.do")
@@ -38,5 +43,20 @@ public class BoardController {
         log.info(paging.toString());
 
         return "/board/list";
+    }
+    @GetMapping("/{boardNo}/detail.do")
+    public String detail(@PathVariable int boardNo,
+                         PagingDto paging,
+                         HttpServletRequest req,
+                         Model model){
+        //pathVariable : 파라미터가 쿼리스트링으로 오는 것이 보기 좋지 않고 명시적이지 않아서 등장
+        //pathVariable : required=true 를 무조건 갖는다.
+        paging.setQueryString(req.getParameterMap());
+        BoardDto board=boardService.detail(boardNo);
+        List<ReplyDto> replyList=replyService.boardDetailList(boardNo,paging);
+        model.addAttribute("board",board);
+        model.addAttribute("replyList",replyList);
+        model.addAttribute("paging",paging);
+        return  "/board/detail";
     }
 }
