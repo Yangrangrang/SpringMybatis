@@ -21,4 +21,6 @@ public interface ReplyMapper {
     int updateById(ReplyDto dto);
     int insert(ReplyDto dto);
 
+    List<ReplyDto> findByFkReplyNo(int replyNo);
+
 }

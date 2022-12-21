@@ -62,12 +62,42 @@
         </div>
     </div>
     <h2>댓글 리스트</h2>
+    <div th:if="${session.loginUser!=null}" id="replyRegisterContainer">
+        <th:block th:include="/reply/register"></th:block>
+    </div>
     <div id="replyListContainer">
         <th:block th:include="/reply/list"></th:block>
     </div>
     <script th:inline="javascript">
+        const replyListContainer=document.getElementById("replyListContainer");
+
+        function loadRegisterForm(replyNo){
+            const replyRegisterForm=document.forms["replyRegisterForm"];
+            const cloneForm=replyRegisterForm.cloneNode(true); //등록폼 가져와서 복사
+            cloneForm.onsubmit=function (e){ //복사된 폼의 등록 이벤트 재정의
+                registerReply(e,cloneForm);
+            }
+            cloneForm.fkReplyNo.value=replyNo; //복사된 폼의 참조하는 부모 번호 정의
+            let selector="reReplyRegisterContainer"+replyNo;
+            const reReplyRegisterContainer=document.getElementById(selector); //복사한 폼의 옮길 위치
+            reReplyRegisterContainer.append(cloneForm);
+        }
+        async function removeReply(replyNo){
+            let url="/reply/delete.do?replyNo="+replyNo;
+            const resp=await fetch(url,{method:"DELETE"});
+            if(resp.status===200){
+                const json=await resp.json();
+                if(json.state==1){
+                    await loadReplyList();
+                    alert("삭제 성공!");
+                }else{
+                    alert("삭제할 레코드가 없습니다.");
+                }
+            }else{
+                alert(`삭제 실패! ${resp.status}`);
+            }
+        }
         function init(){
-            const replyListContainer=document.getElementById("replyListContainer");
             const pageBtns=replyListContainer.querySelectorAll(".uk-pagination a");
             const replyRegisterForm=document.forms["replyRegisterForm"];
             pageBtns.forEach((btn)=>{
@@ -82,25 +112,62 @@
                     init();
                 }
             });
-            replyRegisterForm.onsubmit=async (e)=>{
-                e.preventDefault();
-                let url="/reply/register.do";
-                const formData=new FormData(replyRegisterForm);
-                //let queryString="?userId="+replyRegisterForm.userId.value+"&title="+replyRegisterForm.title.value;
-                //post 통신으로 하더라도 fetch 로 통신시 파라미터를 queryString 을 생성해서 통신해야 한다.!!
-                //multipart/form-data 로 전달할때는 new FormData(formNode)를 넣으면 자동으로 파라미터 생성
-                const resp=await fetch(url,{method:"POST",body:formData});
-                const json=await resp.json();
-                console.log(json);
-                if(json.state==1){
-                    const resp= await fetch("/reply/[[${boardNo}]]/list.do");
-                    const html=await resp.text();
-                    replyListContainer.innerHTML=html;
-                    init();
-                }
-            }
+            replyRegisterForm.onsubmit=function (e){
+                registerReply(e,replyRegisterForm);
+            };
         }
         init();
+        async function registerReply(e , replyRegisterForm){
+            e.preventDefault();
+            let url="/reply/register.do";
+            const formData=new FormData(replyRegisterForm);
+            //let queryString="?userId="+replyRegisterForm.userId.value+"&title="+replyRegisterForm.title.value;
+            //post 통신으로 하더라도 fetch 로 통신시 파라미터를 queryString 을 생성해서 통신해야 한다.!!
+            //multipart/form-data 로 전달할때는 new FormData(formNode)를 넣으면 자동으로 파라미터 생성
+            const resp=await fetch(url,{method:"POST",body:formData});
+            const json=await resp.json();
+            console.log(json);
+            if(json.state==1){
+                await loadReplyList();
+            }
+        }
+        async function loadReplyList(){
+            const resp= await fetch("/reply/[[${boardNo}]]/list.do");
+            const html=await resp.text();
+            replyListContainer.innerHTML=html;
+            init();
+        }
+
+        async function loadReplyModifyForm(replyNo){
+            let url="/reply/modify.do?replyNo="+replyNo;
+            let seletor="replyContainer"+replyNo;
+            const replyContainer=document.getElementById(seletor);
+            const resp=await fetch(url);
+            if(resp.status==200){
+                let html=await resp.text();
+                replyContainer.innerHTML=html;
+            }
+        }
+        //node.onsubmit=modifyReply; //modifyReply.this == node
+        //node.onsubmit=function(event){modifyReply();}  //modifyReply.this == window
+        async function modifyReply(formNode){
+            //console.log(formNode);
+            const formData=new FormData(formNode); //queryString 작성 필요 없음 (단!! multipart/form-data 만)
+            let url="/reply/modify.do"
+            const  resp=await fetch(url,{method:"PUT",body:formData});
+            if(resp.status==200){
+                const json=await resp.json();
+                if(json.state==1){
+                    await loadReplyList();
+                    alert("수정 성공");
+                }else{
+                    alert("이미 삭제된 레코드 입니다.");
+                }
+            }else{
+                alert("서버 오류 ("+resp.status+")");
+            }
+        }
+
     </script>
 
 </div>
