@@ -6,12 +6,15 @@ import com.bigdata6.spring_mybatis.dto.UserDto;
 import com.bigdata6.spring_mybatis.service.ReplyService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.Data;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -21,9 +24,9 @@ import java.util.List;
 @RequestMapping("/reply")
 public class ReplyController {
     private ReplyService replyService;
-    @Value("${spring.servlet.multipart.location}")
+    @Value("${img.upload.path}") // 유저간의 약속된 이미지 업로드 경로
     private String imgPath;
-
+    private Logger log= LoggerFactory.getLogger(this.getClass());
     public ReplyController(ReplyService replyService) {
         this.replyService = replyService;
     }
@@ -48,8 +51,14 @@ public class ReplyController {
     public @ResponseBody AjaxSateHandler delete(int replyNo,
                                                 @SessionAttribute UserDto loginUser){
         AjaxSateHandler ajaxSateHandler=new AjaxSateHandler();
+        ReplyDto reply = replyService.detail(replyNo);
         int remove=replyService.removeOne(replyNo);
         ajaxSateHandler.setState(remove);
+        if(remove>0 && reply.getImgPath()!=null){
+            File originImgFile = new File(imgPath+"/"+reply.getImgPath());
+            boolean del = originImgFile.delete();
+            log.info("원본 이미지 삭제: " ,del);
+        }
         return  ajaxSateHandler;
     }
 
@@ -57,12 +66,19 @@ public class ReplyController {
     public @ResponseBody AjaxSateHandler register(ReplyDto reply,
                                                   @SessionAttribute UserDto loginUser,
                                                   MultipartFile imgFile){ //임시 저장된 파일(blob) 온다
+        // MultipartFile input type = file name = imgFile 있으면 무조건 null이 아니다.
         if(!imgFile.isEmpty()){
-            Path path= Paths.get(imgPath+"/a.jpeg");
-            try {
-                imgFile.transferTo(path);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+            String [] contentsTypes = imgFile.getContentType().split("/"); // image/jpeg
+            if(contentsTypes[0].equals("image")){
+                String fileName = "reply_"+System.currentTimeMillis()+"_"+(int)(Math.random()*10000)+"."+contentsTypes[1];  // 회사 규칙
+                Path path= Paths.get(imgPath+"/"+fileName);
+                try {
+                    imgFile.transferTo(path);
+                    reply.setImgPath(fileName);
+                    log.info(fileName);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
         AjaxSateHandler ajaxSateHandler=new AjaxSateHandler();
@@ -81,10 +97,32 @@ public class ReplyController {
         return "/reply/modify";
     }
     @PutMapping("/modify.do")
-    public @ResponseBody AjaxSateHandler modify(ReplyDto reply,
-                                                @SessionAttribute UserDto loginUser){
+    public @ResponseBody AjaxSateHandler modify(
+            ReplyDto reply,
+            @SessionAttribute UserDto loginUser,
+            @RequestParam(required = false, name="imgFile") MultipartFile imgFile
+    ){
         AjaxSateHandler ajaxSateHandler=new AjaxSateHandler();
+        String originImgPath = reply.getImgPath();  //없으면 null또는 공백("")으로 넘어온다
+        if(imgFile!=null && !imgFile.isEmpty()){
+            String[] contentsTypes = imgFile.getContentType().split("/");
+            if(contentsTypes[0].equals("image")){
+                try{
+                    String fileName="reply_"+System.currentTimeMillis()+"_"+(int)(Math.random()*10000)+"."+contentsTypes[1];//회사 규칙대로 생성
+                    Path path = Paths.get(imgPath+"/"+fileName);
+                    imgFile.transferTo(path);   // 임시저장된 파일을 실제로 저장
+                    reply.setImgPath(fileName);
+                } catch (Exception e) {
+                    log.error(e.getMessage());
+                }
+            }
+        }
         int modify=replyService.modifyOne(reply);
+        if(modify>0 && (originImgPath!=null || !originImgPath.isEmpty())){
+            File originImgFile=new File(imgPath+"/"+originImgPath);
+            boolean del = originImgFile.delete();
+            log.info("원본 이미지 삭제: ", del);
+        }
         ajaxSateHandler.setState(modify);
         return  ajaxSateHandler;
     }

@@ -16,6 +16,10 @@
                      column="user_id"
                      select="com.bigdata6.spring_mybatis.mapper.UserMapper.findById"
                      fetchType="lazy"/>
+        <collection property="boardImgList"
+                    select="com.bigdata6.spring_mybatis.mapper.BoardImgMapper.findByBoardNo"
+                    column="board_no"
+                    fetchType="lazy"/>
     <!--    <collection property="replyList" column="board_no"/> -->
     </resultMap>
     <!--    association select(같이 출력할 쿼리 Id) column(select에서 사용할 매개변수)
@@ -58,8 +62,12 @@
     </select>
 -->
 
-<!--    int updateViews(int boardNo);-->
+<!--    int updateViews(int boardNo);   -->
     <update id="updateViews">
         UPDATE BOARD SET views = views+1 WHERE board_no=#{boardNo}
     </update>
+<!--    int insert(BoardDto dto);   -->
+    <insert id="insert" parameterType="BoardDto" useGeneratedKeys="true" keyProperty="boardNo">
+        INSERT INTO BOARD (title,contents,user_id) VALUE (#{title},#{contents},#{userId})
+    </insert>
 </mapper>

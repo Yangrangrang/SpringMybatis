@@ -1,5 +1,6 @@
 package com.bigdata6.spring_mybatis.mapper;
 
+import com.bigdata6.spring_mybatis.dto.BoardDto;
 import com.bigdata6.spring_mybatis.dto.PagingDto;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -53,5 +54,11 @@ class BoardMapperTest {
 
     @Test
     void insert() {
+        BoardDto board = new BoardDto();
+        board.setTitle("테스트ddd");
+        board.setUserId("user1000ddd");
+        board.setContents("내용내용내뇽testtestt");
+        boardMapper.insert(board);
+        log.info(board.toString());
     }
 }
