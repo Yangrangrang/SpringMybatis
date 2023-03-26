@@ -6,7 +6,7 @@
 <mapper namespace="com.bigdata6.spring_mybatis.mapper.UserMapper">
 <!--    찾아갈수 있도록 입력: namespace-->
 <!--    id : 해당 타입의 method 이름-->
-    <select id="findAll" resultType="com.bigdata6.spring_mybatis.dto.UserDto">
+    <select id="findAll" resultType="com.bigdata6.spring_mybatis.mapper.UserMapper">
         SELECT * FROM USER
     </select>
 <!--    #{필드명} : 필드의 값을 value로 대입, user_id=#{id} => user_id='user1' -->
